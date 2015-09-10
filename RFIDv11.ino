@@ -24,8 +24,12 @@
 RFID_CODE allow_code[ALLOW_CODE_SIZE]; //ALLOWED NON-MASTER ID'S
 unsigned char allow_code_len;          //# OF IDS ALLOWED (MAX VALUE IS ALLOW_CODE_SIZE)
 
+MasterFunction num_master_fnc = ACCESS_NULL; //KEEP TRACK OF MASTER ID FUNCTION  
+
 unsigned long prev_time;   //PREVIOUS TIME COUNTER
 String IR_str;             //String to store IR received signals
+unsigned long save_to_EEPROM;  //SET WHICH POSITIONS NEED TO BE UPDATED INTO EEPROM,
+                               //0 means do not save to EEPROM
 
 WIEGAND rfid;
 IRrecv ir(PIN_IR_RECV);
@@ -37,22 +41,22 @@ void setup() {
   Serial.begin(9600);            //INITIALIZE SERIAL PC COMMUNICATION
   rfid.begin();                  //INITIALIZE WIEGAND SERIAL-PARALLEL COMMUNICATION
   ir.enableIRIn();               //START IR RECEIVER
-  read_codes_EEPROM();           //READ ID'S FROM EEPROM
+  read_codes_EEPROM();           //READ ID'S FROM EEPROM  
   prev_time = 0;                 //INITIALIZE PREV_TIME
+  save_to_EEPROM = 0;            //DO NOT SAVE CODES TO EEPROM
   Serial.println(F("RFID Door Access Control - READY"));
   print_n_acc_codes();           //PRINT # OF IDS REGISTERED
 }
 
 void loop() {  
   wdt_reset();                   //reset watchdog
-  static MasterFunction num_master_fnc = ACCESS_NULL; //KEEP TRACK OF MASTER ID FUNCTION  
-  if (rfid.available()) {                             //CHECK FOR RFID AVAILABILITY
-    RFID_CODE code = rfid.getCode();                  //GET ID
-    execute_rfid_fnc(code, num_master_fnc);
-  }
+  if (rfid.available())              //CHECK FOR RFID AVAILABILITY    
+    execute_rfid_fnc(rfid.getCode());  
   wdt_reset();                   //reset watchdog
-  check_master_access(num_master_fnc);    
-  check_ir_s_modes(num_master_fnc);
+  check_master_access();    
+  check_ir_s_modes();
+  wdt_reset();                   //reset watchdog
+  write_codes_EEPROM();   //check if any codes need writing
 }
 
 

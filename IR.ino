@@ -35,7 +35,7 @@ IR_ID read_ir(){
   return NO_BTN_PRESSED;
 }
 
-void check_ir_s_modes(MasterFunction& num_master_fnc){
+void check_ir_s_modes(){
   IR_ID ir_id = read_ir();                              //IR BTN IDENTIFICATION  
   //CHECK FOR SPECIAL MODES AND BUTTON PRESS
   if (num_master_fnc == REGISTER || num_master_fnc == UNREGISTER){    
@@ -58,7 +58,7 @@ void check_ir_s_modes(MasterFunction& num_master_fnc){
             break;
         }      
         IR_str = "";
-        reset_master_fnc(num_master_fnc);
+        reset_master_fnc();
       } else if (ir_id == USD){      
         IR_str = "";
       }
