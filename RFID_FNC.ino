@@ -11,11 +11,12 @@
 void reset_master_fnc(){
   digitalWrite(PIN_LED,LED_INIT_STATE); //LED IN ITS INITIAL STATE
   num_master_fnc = ACCESS_NULL;         //RESET MASTER FUNCTION COUNT
+  chg_master_code = false;              //AVOID UNWANTED CHG OF MASTER ID
 }
 
 void execute_rfid_fnc(RFID_CODE code){
   IR_str = ""; //RESET IR string, when RFID is activated, IR should be cleared
-  if (code == MASTER_CODE){    //CHECK FOR MASTER ID AND FUNCTION
+  if (code == master_code){    //CHECK FOR MASTER ID AND FUNCTION
       num_master_fnc = static_cast<MasterFunction>((num_master_fnc+1) % (MAX_NUM_MASTER_FNC+1)); //SET TO [1,MAX_NUM_MASTER_FNC]
       Serial.print(F("Master Code - "));    
       switch(num_master_fnc){
@@ -55,6 +56,6 @@ void check_master_access(){
   if ((num_master_fnc == ACCESS) && ((unsigned long)(millis() - prev_time) >= ITV_MASTER_ACCESS)) {
     num_master_fnc = ACCESS_NULL;    //RESET COUNTERS 
     Serial.println(F("Access Allowed"));
-    activate_control(MASTER_CODE);   //MASTER ID PASSED, ACTIVATE CONTROL          
+    activate_control(master_code);   //MASTER ID PASSED, ACTIVATE CONTROL          
   }  
 }
