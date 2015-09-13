@@ -16,7 +16,7 @@ void activate_control(const RFID_CODE code){
 }
 
 //CHECK IF ID IS REGISTERED AND VALID
-void validate_rfid(const RFID_CODE code){
+void validate_rfid(const RFID_CODE code){  
   if (find_ID(code) != -1){ //FOUND ID, ACTIVATE CONTROL
     activate_control(code);
   } else {                  //ID NOT FOUND
@@ -25,3 +25,9 @@ void validate_rfid(const RFID_CODE code){
     digitalPulse(PIN_BZR,BZR_BEEP_MS);
   }
 }
+
+//verify elapsed time
+bool elapsed_time(unsigned long t){
+  return ((unsigned long)(millis() - prev_time) >= t);
+}
+

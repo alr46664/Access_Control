@@ -25,12 +25,11 @@ void register_rfid(const RFID_CODE code){
     return;
   }
   if (allow_code_len+1 < ALLOW_CODE_SIZE){ //CHECK STORAGE SPACE AVAILABILITY
-    allow_code[allow_code_len] = code;     //STORE NEW CODE        
-    set_update_EEPROM(1 << allow_code_len); //UPDATE EEPROM WHEN TIME COMES
+    allow_code[allow_code_len++] = code; //STORE NEW CODE        
+    set_update_EEPROM();                 //UPDATE EEPROM WHEN TIME COMES
     //Serial.print(F("RFID Code: ")); 
     //Serial.print(code);
     //Serial.println(F(" - Registered"));    
-    allow_code_len++;                      //UPDATE # OF TAGS
     print_n_acc_codes();
   } else {
     //Serial.print(F("Registration error - Exceeded maximum number of ID's: "));
@@ -44,7 +43,7 @@ void unregister_rfid(const RFID_CODE code){
   const short ID_POS = find_ID(code);
   if (ID_POS != -1) {           //CHECK IF ID IS AN ALLOWED ID
     allow_code[ID_POS] = allow_code[--allow_code_len]; //UNREGISTER ID    
-    set_update_EEPROM(1 << ID_POS);    //UPDATE EEPROM WHEN TIME COMES
+    set_update_EEPROM();                               //UPDATE EEPROM WHEN TIME COMES
     //Serial.print(F("RFID Code: "));
     //Serial.print(code);
     //Serial.println(F(" - Unregistered")); 

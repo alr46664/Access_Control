@@ -32,17 +32,17 @@ String IR_str;             //String to store IR received signals
 
 bool save_master_code;         //IF TRUE, SAVE MASTER CODE TO EEPROM
 bool chg_master_code;          //IF TRUE, NEXT CODE INSERTED INTO IR WILL CHG MASTER_CODE
-unsigned long save_to_EEPROM;  //SET WHICH POSITIONS NEED TO BE UPDATED INTO EEPROM,
-                               //0 means do not save to EEPROM
+
+bool save_to_EEPROM;  //SET IF EEPROM NEEDS UPDATE
                                
 WIEGAND rfid;                  //WIEGAND protocol RFID reader
 IRrecv ir(PIN_IR_RECV);        //IR sensor
 
 void setup() {
   wdt_enable(WDTO_8S);           //watchdog configured to 8s
-  wdt_reset();                   //reset watchdog
-  prev_time = 0;                 //INITIALIZE PREV_TIME    
+  wdt_reset();                   //reset watchdog  
   initialize_pins();             //SETUP PINS TO INITIAL VALUES AND SIGNAL DIRECTIONS
+  init_variables();              //SETUP INITIAL VALUES TO VARIABLES        
   Serial.begin(9600);            //INITIALIZE SERIAL PC COMMUNICATION
   read_EEPROM();                 //READ DATA FROM EEPROM 
   rfid.begin();                  //INITIALIZE WIEGAND SERIAL-PARALLEL COMMUNICATION
@@ -53,15 +53,20 @@ void setup() {
 
 void loop() {  
   wdt_reset();                   //reset watchdog
-  if (rfid.available())              //CHECK FOR RFID AVAILABILITY    
+  if (rfid.available())          //CHECK FOR RFID AVAILABILITY    
     execute_rfid_fnc(rfid.getCode());  
   wdt_reset();                   //reset watchdog
-  check_master_access();         //check master for its access mode  
+  check_elapsed_master_fnc();    //execute timed procedures (master function)
   check_ir();                    //check IR btn pressed
   wdt_reset();                   //reset watchdog
-  write_EEPROM();   //check if any codes need writing
+  write_EEPROM();                //write EEPROM codes if needed
 }
 
-
+void init_variables(){
+  prev_time = 0;                 //INITIALIZE PREV_TIME    
+  IR_str = "";                   //RESET IR STRING
+  chg_master_code = save_master_code = false; //DO NOT SAVE/CHG MASTER CODE YET
+  save_to_EEPROM = false;       //do not update eeprom yet
+}
 
 
