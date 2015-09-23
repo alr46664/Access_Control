@@ -30,8 +30,8 @@ MasterFunction num_master_fnc = ACCESS_NULL; //KEEP TRACK OF MASTER ID FUNCTION
 unsigned long prev_time;   //PREVIOUS TIME COUNTER
 String IR_str;             //String to store IR received signals
 
-bool save_master_code;         //IF TRUE, SAVE MASTER CODE TO EEPROM
-bool chg_master_code;          //IF TRUE, NEXT CODE INSERTED INTO IR WILL CHG MASTER_CODE
+bool save_master_code;          //IF TRUE, SAVE MASTER CODE TO EEPROM
+unsigned char chg_master_code;  //IF 0x3, NEXT CODE INSERTED INTO IR WILL CHG MASTER_CODE
 
 bool save_to_EEPROM;  //SET IF EEPROM NEEDS UPDATE
                                
@@ -65,7 +65,8 @@ void loop() {
 void init_variables(){
   prev_time = 0;                 //INITIALIZE PREV_TIME    
   IR_str = "";                   //RESET IR STRING
-  chg_master_code = save_master_code = false; //DO NOT SAVE/CHG MASTER CODE YET
+  chg_master_code = 0;           //reset chg master code
+  save_master_code = false; //DO NOT SAVE/CHG MASTER CODE YET
   save_to_EEPROM = false;       //do not update eeprom yet
 }
 

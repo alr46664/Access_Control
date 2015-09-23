@@ -41,28 +41,37 @@ void check_ir(){
   if (ir_id != NO_BTN_PRESSED) { //REMOTE CONTROL BTN PRESSED
     digitalPulse(PIN_LED,LED_BLINK_MS/2); //BLINK LED 
     unsigned int str_len = IR_str.length()+1; //GET STRING SIZE    
-    if (ir_id == MODE)  //CHECK FOR NEED TO CHANGE MASTER CODE
-      chg_master_code = true;                
+    if (ir_id == MODE) { //CHECK FOR NEED TO CHANGE MASTER CODE
+      chg_master_code = 0x1;                
+      Serial.println(F("CHANGE MASTER"));
+    }
     RFID_CODE code = get_ir_rfid(ir_id,str_len);   //GET RFID CODE IF AVAILABLE
     wdt_reset();                   //reset watchdog
     if (code != 0) {
       switch (num_master_fnc){
         case ACCESS_NULL:
-          if (chg_master_code) {
+          if (chg_master_code == 0x1) { //check if chg master mode is on
+            if (code == master_code) chg_master_code = 0x3; //check for correct actual master code
+            else                     chg_master_code = 0x0; //incorrect master code, chg mode off
+          } else if (chg_master_code == 0x3) {
             master_code = code; //update master code
+            Serial.print(F("NEW MASTER = "));
+            Serial.println(master_code);
             save_master_code = true; //update master code in EEPROM          
+            chg_master_code = 0; //reset change master
             digitalPulse(PIN_LED,LED_BLINK_MS); //BLINK LED               
           }
           break;
         case REGISTER:  
+          chg_master_code = 0; //reset change master
           register_rfid(code);           
         case UNREGISTER:
+          chg_master_code = 0; //reset change master
           unregister_rfid(code);           
           break;
         default:
           break;
-      }                   
-      chg_master_code = false; //reset change master
+      }                         
     }
   }  
 }
