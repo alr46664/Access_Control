@@ -19,6 +19,7 @@
 
 #define PIN_IR_RECV         9          //Pin connected to IR Receiver
 #define NUM_CTRL_BTN        21         //# OF BUTTONS OF THE REMOTE CONTROL
+#define IR_STR_LEN          11         //maximum number of digits of RFID CODE +1
 
 #define PIN_LED             4          //OUTPUT LED
 #define LED_BLINK_MS        400        //MS TO BLINK LED 

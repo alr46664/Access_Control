@@ -39,13 +39,12 @@ IR_ID read_ir(){
 void check_ir(){
   IR_ID ir_id = read_ir();       //REMOTE CONTROL BTN IDENTIFICATION
   if (ir_id != NO_BTN_PRESSED) { //REMOTE CONTROL BTN PRESSED
-    digitalPulse(PIN_LED,LED_BLINK_MS/2); //BLINK LED 
-    unsigned int str_len = IR_str.length()+1; //GET STRING SIZE    
+    digitalPulse(PIN_LED,LED_BLINK_MS/2); //BLINK LED     
     if (ir_id == MODE) { //CHECK FOR NEED TO CHANGE MASTER CODE
       chg_master_code = 0x1;                
       Serial.println(F("CHANGE MASTER"));
     }
-    RFID_CODE code = get_ir_rfid(ir_id,str_len);   //GET RFID CODE IF AVAILABLE
+    RFID_CODE code = get_ir_rfid(ir_id);   //GET RFID CODE IF AVAILABLE
     wdt_reset();                   //reset watchdog
     if (code != 0) {
       switch (num_master_fnc){
@@ -77,18 +76,31 @@ void check_ir(){
 }
 
 //GET RFID CODE FROM IR RECEPTOR, IF CODE NOT CONFIRMED RETURN 0
-RFID_CODE get_ir_rfid(IR_ID& ir_id, unsigned int& str_len){  
+RFID_CODE get_ir_rfid(IR_ID& ir_id){  
   if (ir_id >= 0 && ir_id <= 9){  //IS A NUMBER, THEN ADD TO IR_str
-    IR_str += String(ir_id);
-  } else if (ir_id == OK && str_len > 0) { //CONFIRM RFID IF CODE IS NON NULL
-    //GET RFID_CODE FORMAT FROM STRING
-    char code_char[str_len];
-    IR_str.toCharArray(code_char,str_len);                  
-    IR_str = "";       
-    return strtoul(code_char,NULL,10); //RETURN RFID_CODE      
+    if (IR_count+1 >= IR_STR_LEN){ //IF OVERFLOW, REPORT ERROR
+      digitalPulse(PIN_BZR,BZR_BEEP_MS/2); //report error
+      resetIRStr(); //reset IR string
+      return 0;
+    }
+    IR_str[IR_count++] = ir_id+'0'; //set IR to correct char representation/position
+  } else if (ir_id == OK) { //CONFIRM RFID        
+    if (IR_count <= 0){ //IF CODE IS NULL, REPORT ERROR
+      digitalPulse(PIN_BZR,BZR_BEEP_MS); //report error
+      return 0;
+    }
+    //GET NON NULL RFID_CODE FORMAT FROM STRING
+    RFID_CODE IR_RFID = strtoul(IR_str,NULL,10); //PARSE RFID_CODE FROM STRING         
+    resetIRStr(); //reset IR string
+    return IR_RFID;
   } else if (ir_id == USD){      
-    IR_str = "";
+    resetIRStr(); //reset IR string
   }  
   return 0;
+}
+
+//RESET THE IR STRING TO UNSIGNED LONG 0
+void resetIRStr(){  
+  memset(IR_str,IR_count = 0,IR_STR_LEN);   //RESET IR STRING      
 }
 

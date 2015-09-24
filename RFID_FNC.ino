@@ -11,12 +11,12 @@
 void reset_master_fnc(){
   digitalWrite(PIN_LED,LED_INIT_STATE); //LED IN ITS INITIAL STATE
   num_master_fnc = ACCESS_NULL;         //RESET MASTER FUNCTION COUNT  
-  IR_str = ""; //RESET IR string, when RFID is activated, IR should be cleared
+  resetIRStr(); //RESET IR string, when RFID is activated, IR should be cleared
   chg_master_code = 0; //STOP MASTER CODE CHANGE
 }
 
 void execute_rfid_fnc(RFID_CODE code){
-  IR_str = ""; //RESET IR string, when RFID is activated, IR should be cleared
+  resetIRStr(); //RESET IR string, when RFID is activated, IR should be cleared
   chg_master_code = 0; //STOP MASTER CODE CHANGE
   if (code == master_code){    //CHECK FOR MASTER ID AND FUNCTION      
       num_master_fnc = static_cast<MasterFunction>((num_master_fnc+1) % (MAX_NUM_MASTER_FNC+1)); //SET TO [1,MAX_NUM_MASTER_FNC]
