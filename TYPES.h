@@ -14,6 +14,10 @@
 
 //Defining header guard
 
+//POWER DEFINITIONS 
+#define EN_MODULES          0x42       //Activate only Timer0 and Serial Interfaces
+//POWER DEFINITIONS END
+
 #define PIN_CONTROL         6          //# OF DIGITAL PIN TO CONTROL
 #define DELAY_CONTROL_MS    600        //KEEP HIGH OUTPUT IN PIN_CONTROL FOR # MS
 

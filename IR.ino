@@ -9,6 +9,8 @@
  */
 
 #include <avr/pgmspace.h> //SAVE DATA INTO FLASH MEMORY
+#include <IRremote.h> //IR Library
+
                                                     //VARIABLE HAS TO BE STATIC OR GLOBAL FOR PROGMEM TO WORK
 const static IR_IDCODE control_codes[] PROGMEM = {  //PROGMEM TO SAVE VARIABLE INTO FLASH
   {PWR,0xffa25d}, {MODE,0xff629d}, {MUTE,0xffe21d},

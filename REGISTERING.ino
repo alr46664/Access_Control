@@ -56,7 +56,9 @@ void unregister_rfid(const RFID_CODE code){
 }
 
 //PRINT # OF IDS TO SERIAL
+/*
 void print_n_acc_codes(){
   Serial.print(allow_code_len);  
   Serial.println(F(" Access Codes Registered"));
 }
+*/

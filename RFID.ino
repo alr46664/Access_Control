@@ -39,20 +39,21 @@ bool save_to_EEPROM;  //SET IF EEPROM NEEDS UPDATE
 WIEGAND rfid;                  //WIEGAND protocol RFID reader
 IRrecv ir(PIN_IR_RECV);        //IR sensor
 
-void setup() {
-  wdt_enable(WDTO_8S);           //watchdog configured to 8s
-  wdt_reset();                   //reset watchdog  
+void setup() {  
+  setupModules(EN_MODULES);      //disable unused modules to reduce power consumption  
   initialize_pins();             //SETUP PINS TO INITIAL VALUES AND SIGNAL DIRECTIONS
   init_variables();              //SETUP INITIAL VALUES TO VARIABLES        
   //Serial.begin(9600);            //INITIALIZE SERIAL PC COMMUNICATION
   read_EEPROM();                 //READ DATA FROM EEPROM 
   rfid.begin();                  //INITIALIZE WIEGAND SERIAL-PARALLEL COMMUNICATION
-  ir.enableIRIn();               //START IR RECEIVER    
+  ir.enableIRIn();               //START IR RECEIVER      
   //Serial.println(F("RFID Door Access Control - READY"));
-  print_n_acc_codes();           //PRINT # OF IDS REGISTERED
+  //print_n_acc_codes();           //PRINT # OF IDS REGISTERED
+  wdt_enable(WDTO_8S);           //watchdog configured to 8s
+  wdt_reset();                   //reset watchdog  
 }
 
-void loop() {  
+void loop() {    
   wdt_reset();                   //reset watchdog
   if (rfid.available())          //CHECK FOR RFID AVAILABILITY    
     execute_rfid_fnc(rfid.getCode());  
@@ -60,7 +61,7 @@ void loop() {
   check_elapsed_master_fnc();    //execute timed procedures (master function)
   check_ir();                    //check IR btn pressed
   wdt_reset();                   //reset watchdog
-  write_EEPROM();                //write EEPROM codes if needed
+  write_EEPROM();                //write EEPROM codes if needed  
 }
 
 void init_variables(){
