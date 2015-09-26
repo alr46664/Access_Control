@@ -15,8 +15,8 @@ void read_EEPROM(){
   EEPROM.get(1017,master_code);  //READ MASTER CODE ID FROM [1017-1024]B OF EEPROM
   if (master_code == 0xFFFFFFFF) //EEPROM IS BEING USED FOR FIRST TIME
     master_code = DEFAULT_MASTER_CODE; //set master code to its default value      
-  Serial.print(F("MASTER CODE = "));
-  Serial.println(master_code);
+  //Serial.print(F("MASTER CODE = "));
+  //Serial.println(master_code);
   //START READING ALLOW_CODE ARRAY
   EEPROM.get(0,allow_code_len);
   if (allow_code_len > ALLOW_CODE_SIZE)  //CHECK IF IDS LEN IS VALID (EEPROM IS BEING USED FOR FIRST TIME)

@@ -42,7 +42,7 @@ void check_ir(){
     digitalPulse(PIN_LED,LED_BLINK_MS/2); //BLINK LED     
     if (ir_id == MODE) { //CHECK FOR NEED TO CHANGE MASTER CODE
       chg_master_code = 0x1;                
-      Serial.println(F("CHANGE MASTER"));
+      //Serial.println(F("CHANGE MASTER"));
     }
     RFID_CODE code = get_ir_rfid(ir_id);   //GET RFID CODE IF AVAILABLE
     wdt_reset();                   //reset watchdog
@@ -54,8 +54,8 @@ void check_ir(){
             else                     chg_master_code = 0x0; //incorrect master code, chg mode off
           } else if (chg_master_code == 0x3) {
             master_code = code; //update master code
-            Serial.print(F("NEW MASTER = "));
-            Serial.println(master_code);
+            //Serial.print(F("NEW MASTER = "));
+            //Serial.println(master_code);
             save_master_code = true; //update master code in EEPROM          
             chg_master_code = 0; //reset change master
             digitalPulse(PIN_LED,LED_BLINK_MS); //BLINK LED               

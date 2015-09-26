@@ -21,7 +21,7 @@ void execute_rfid_fnc(RFID_CODE code){
   if (code == master_code){    //CHECK FOR MASTER ID AND FUNCTION      
       num_master_fnc = static_cast<MasterFunction>((num_master_fnc+1) % (MAX_NUM_MASTER_FNC+1)); //SET TO [1,MAX_NUM_MASTER_FNC]
       prev_time = millis();       //COUNT TIME
-      Serial.print(F("Master Code - "));    
+      //Serial.print(F("Master Code - "));    
       switch(num_master_fnc){
         case ACCESS_NULL:
           digitalWrite(PIN_LED,LED_INIT_STATE); //LED IN ITS INITIAL STATE
@@ -29,11 +29,11 @@ void execute_rfid_fnc(RFID_CODE code){
         case ACCESS:                              
           break;                  
         case REGISTER:
-          Serial.println(F("Registration Mode"));
+          //Serial.println(F("Registration Mode"));
           digitalWrite(PIN_LED,1-LED_INIT_STATE); //LED OPPOSITE STATE OF INITIAL          
           break;          
         case UNREGISTER:
-          Serial.println(F("Unregistration Mode"));
+          //Serial.println(F("Unregistration Mode"));
           digitalPulse(PIN_LED,LED_BLINK_MS); //BLINK LED              
           break;                             
       }
@@ -57,7 +57,7 @@ void execute_rfid_fnc(RFID_CODE code){
 void check_elapsed_master_fnc(){  
   if ((num_master_fnc == ACCESS) && elapsed_time(ITV_MASTER_ACCESS)) {
     reset_master_fnc();    //RESET COUNTERS 
-    Serial.println(F("Access Allowed"));
+    //Serial.println(F("Access Allowed"));
     activate_control(master_code);   //MASTER ID PASSED, ACTIVATE CONTROL          
   } else if ((num_master_fnc == REGISTER || num_master_fnc == UNREGISTER) \
             && elapsed_time(ITV_EEPROM)) {  

@@ -44,11 +44,11 @@ void setup() {
   wdt_reset();                   //reset watchdog  
   initialize_pins();             //SETUP PINS TO INITIAL VALUES AND SIGNAL DIRECTIONS
   init_variables();              //SETUP INITIAL VALUES TO VARIABLES        
-  Serial.begin(9600);            //INITIALIZE SERIAL PC COMMUNICATION
+  //Serial.begin(9600);            //INITIALIZE SERIAL PC COMMUNICATION
   read_EEPROM();                 //READ DATA FROM EEPROM 
   rfid.begin();                  //INITIALIZE WIEGAND SERIAL-PARALLEL COMMUNICATION
   ir.enableIRIn();               //START IR RECEIVER    
-  Serial.println(F("RFID Door Access Control - READY"));
+  //Serial.println(F("RFID Door Access Control - READY"));
   print_n_acc_codes();           //PRINT # OF IDS REGISTERED
 }
 

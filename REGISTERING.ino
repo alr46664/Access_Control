@@ -30,7 +30,7 @@ void register_rfid(const RFID_CODE code){
     //Serial.print(F("RFID Code: ")); 
     //Serial.print(code);
     //Serial.println(F(" - Registered"));    
-    print_n_acc_codes();
+    //print_n_acc_codes();
   } else {
     //Serial.print(F("Registration error - Exceeded maximum number of ID's: "));
     //Serial.println(ALLOW_CODE_SIZE);
@@ -47,7 +47,7 @@ void unregister_rfid(const RFID_CODE code){
     //Serial.print(F("RFID Code: "));
     //Serial.print(code);
     //Serial.println(F(" - Unregistered")); 
-    print_n_acc_codes();   
+    //print_n_acc_codes();   
   } else {
     //Serial.print(F("Unregistration error - Could not find ID: "));
     //Serial.println(code);
