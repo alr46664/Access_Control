@@ -20,20 +20,26 @@ short find_ID(const RFID_CODE code){
 //REGISTER NEW ID IF WE HAVE STORAGE SPACE AVAILABLE
 void register_rfid(const RFID_CODE code){
   if (find_ID(code) != -1){ //ID ALREADY REGISTERED  
-    //Serial.print(F("Registration Warning - ID Already Registered: "));
-    //Serial.println(code);    
+    #ifdef DEBUG_MODE
+    Serial.print(F("Registration Warning - ID Already Registered: "));
+    Serial.println(code);    
+    #endif
     return;
   }
   if (allow_code_len+1 < ALLOW_CODE_SIZE){ //CHECK STORAGE SPACE AVAILABILITY
     allow_code[allow_code_len++] = code; //STORE NEW CODE        
     set_update_EEPROM();                 //UPDATE EEPROM WHEN TIME COMES
-    //Serial.print(F("RFID Code: ")); 
-    //Serial.print(code);
-    //Serial.println(F(" - Registered"));    
-    //print_n_acc_codes();
+    #ifdef DEBUG_MODE
+    Serial.print(F("RFID Code: ")); 
+    Serial.print(code);
+    Serial.println(F(" - Registered"));    
+    print_n_acc_codes();
+    #endif
   } else {
-    //Serial.print(F("Registration error - Exceeded maximum number of ID's: "));
-    //Serial.println(ALLOW_CODE_SIZE);
+    #ifdef DEBUG_MODE
+    Serial.print(F("Registration error - Exceeded maximum number of ID's: "));
+    Serial.println(ALLOW_CODE_SIZE);
+    #endif
     digitalPulse(PIN_BZR,BZR_BEEP_MS);  
   }
 }
@@ -44,21 +50,25 @@ void unregister_rfid(const RFID_CODE code){
   if (ID_POS != -1) {           //CHECK IF ID IS AN ALLOWED ID
     allow_code[ID_POS] = allow_code[--allow_code_len]; //UNREGISTER ID    
     set_update_EEPROM();                               //UPDATE EEPROM WHEN TIME COMES
-    //Serial.print(F("RFID Code: "));
-    //Serial.print(code);
-    //Serial.println(F(" - Unregistered")); 
-    //print_n_acc_codes();   
+    #ifdef DEBUG_MODE
+    Serial.print(F("RFID Code: "));
+    Serial.print(code);
+    Serial.println(F(" - Unregistered")); 
+    print_n_acc_codes();   
+    #endif
   } else {
-    //Serial.print(F("Unregistration error - Could not find ID: "));
-    //Serial.println(code);
+    #ifdef DEBUG_MODE
+    Serial.print(F("Unregistration error - Could not find ID: "));
+    Serial.println(code);
+    #endif
     digitalPulse(PIN_BZR,BZR_BEEP_MS);    
   }  
 }
 
 //PRINT # OF IDS TO SERIAL
-/*
+#ifdef DEBUG_MODE
 void print_n_acc_codes(){
   Serial.print(allow_code_len);  
   Serial.println(F(" Access Codes Registered"));
 }
-*/
+#endif

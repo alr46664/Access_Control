@@ -8,20 +8,24 @@
  * (activate ac motor/relay)
  */
 
-//PUT OUTPUT PIN_CONTROL HIGH FOR DELAY_CONTROL_MS MS
+// DIGITAL PULSE PIN_CONTROL FOR DELAY_CONTROL_MS MS
 void activate_control(const RFID_CODE code){
-  //Serial.print("ID Access Allowed - ");
-  //Serial.println(code); 
+  #ifdef DEBUG_MODE
+  Serial.print("ID Access Allowed - ");
+  Serial.println(code); 
+  #endif
   digitalPulse(PIN_CONTROL,DELAY_CONTROL_MS);
 }
 
-//CHECK IF ID IS REGISTERED AND VALID
+// CHECK IF ID IS REGISTERED AND VALID
 void validate_rfid(const RFID_CODE code){  
-  if (find_ID(code) != -1){ //FOUND ID, ACTIVATE CONTROL
+  if (find_ID(code) != -1){ // FOUND ID, ACTIVATE CONTROL
     activate_control(code);
-  } else {                  //ID NOT FOUND
-    //Serial.print("Unregistered ID - ");        
-    //Serial.println(code);   
+  } else {                  // ID NOT FOUND
+    #ifdef DEBUG_MODE
+    Serial.print("Unregistered ID - ");        
+    Serial.println(code);   
+    #endif
     digitalPulse(PIN_BZR,BZR_BEEP_MS);
   }
 }
