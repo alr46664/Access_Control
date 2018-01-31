@@ -9,23 +9,34 @@
  */
 
 // DIGITAL PULSE PIN_CONTROL FOR DELAY_CONTROL_MS MS
-void activate_control(const RFID_CODE code){
+void activate_control(const RFID_CODE& code){
   #ifdef DEBUG_MODE
-  Serial.print("ID Access Allowed - ");
+  Serial.print(F("ID Access Allowed - "));
   Serial.println(code); 
-  #endif
+  #endif    
+  
+  // print ACCESS ALLOWED
+  oled_set_cursor_function();
+  oled_println(oled_get_string(OLED_ACCESS_ALLOWED));  
+  oled_println(oled_ltoa(code));
+  
   digitalPulse(PIN_CONTROL,DELAY_CONTROL_MS);
 }
 
 // CHECK IF ID IS REGISTERED AND VALID
-void validate_rfid(const RFID_CODE code){  
+void validate_rfid(const RFID_CODE& code){  
   if (find_ID(code) != -1){ // FOUND ID, ACTIVATE CONTROL
     activate_control(code);
   } else {                  // ID NOT FOUND
     #ifdef DEBUG_MODE
-    Serial.print("Unregistered ID - ");        
+    Serial.print(F("Unregistered ID - "));        
     Serial.println(code);   
     #endif
+    
+    oled_set_cursor_function();        
+    oled_println(oled_get_string(OLED_UNREGISTERED));  
+    oled_println(oled_ltoa(code));
+
     digitalPulse(PIN_BZR,BZR_BEEP_MS);
   }
 }

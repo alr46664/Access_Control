@@ -16,6 +16,21 @@
 // SET DEBUG MODE (COMMENT IT OUT TO DEACTIVATE THIS MODE)
 // #define DEBUG_MODE
 
+// OLED
+
+#define OLED_ROWS           8  // OLED rows
+#define OLED_COLS           16 // OLED columns 
+#define OLED_POWERSAVE_OFF  0  // OLED powersave off
+#define OLED_POWERSAVE_ON   1  // OLED powersave on  (no content displayed!)
+
+  // index of the strings used with OLED
+#define OLED_ACCESS_ALLOWED 0   
+#define OLED_UNREGISTERED   1 
+#define OLED_CHANGE_MASTER  2
+#define OLED_NEW_MASTER     3
+
+// OLED - end
+
 // POWER DEFINITIONS 
 #define EN_MODULES          0x42       // Activate only Timer0 and Serial Interfaces
 // POWER DEFINITIONS END
@@ -51,8 +66,8 @@
 // MASTER OP END
 
 // IR OP MODES
-#define CNG_MASTER          0x1        // CHANGE MASTER RFID TAG MODE
-#define CNG_MASTER_CONFIRM  0x2        // CHANGE MASTER RFID TAG CONFIRM
+#define CNG_MASTER          0x1        // CHANGE MASTER RFID MODE
+#define CNG_MASTER_CONFIRM  0x2        // CHANGE MASTER RFID CONFIRMED OLD MASTER CODE
 #define CNG_MASTER_NOCNG    0x3        // DO NOT CHANGE MASTER RFID - REGISTER UNREGISTER NEW NON-MASTER TAGS
 // IR OP MODES END
 
@@ -68,15 +83,15 @@ typedef unsigned long RFID_CODE;   // RFID CODE VARIABLE TYPE DEF
 enum MasterFunction {ACCESS_NULL = 0, ACCESS, REGISTER, UNREGISTER}; // FUNCTIONS OF MASTER ID
 
 enum IR_ID {    // ID of IR code
-  ZERO = 0,
-  ONE,TWO,THREE,
-  FOUR,FIVE,SIX,
-  SEVEN,EIGHT,NINE,  
-  OK,USD,
-  PWR,MODE,MUTE,
-  PLAY,PREV,NEXT,
-  EQ,MINUS,PLUS,
-  NO_BTN_PRESSED
+  IR_ZERO = 0,
+  IR_ONE, IR_TWO, IR_THREE,
+  IR_FOUR,IR_FIVE,IR_SIX,
+  IR_SEVEN,IR_EIGHT,IR_NINE,  
+  IR_OK,IR_USD,
+  IR_PWR,IR_MODE,IR_MUTE,
+  IR_PLAY,IR_PREV,IR_NEXT,
+  IR_EQ,IR_MINUS,IR_PLUS,
+  IR_NO_BTN_PRESSED
 };
 
 typedef struct {
@@ -92,3 +107,4 @@ typedef struct {
 // End of header guard
 
 #endif TYPES_H 
+

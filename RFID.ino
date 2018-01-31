@@ -35,8 +35,6 @@
  */
 
 #include <avr/wdt.h>  // Watchdog Library (needs optiboot bootloader to work well)
-#include <IRremote.h> // IR Library (https://github.com/z3t0/Arduino-IRremote)
-#include <Wiegand.h>  // Wiegand RFID Library (https://github.com/monkeyboard/Wiegand-Protocol-Library-for-Arduino)
 #include "TYPES.h"    // Custom Project Constants and Types
 
 RFID_CODE allow_code[ALLOW_CODE_SIZE]; // ALLOWED NON-MASTER ID'S
@@ -46,6 +44,7 @@ RFID_CODE master_code;                        // MASTER CODE RFID TAG
 MasterFunction num_master_fnc = ACCESS_NULL;  // KEEP TRACK OF MASTER ID FUNCTION  
 
 unsigned long prev_time;   // PREVIOUS TIME COUNTER
+
 char IR_str[IR_STR_LEN];   // String to store IR received signals
 unsigned char IR_count;    // counter to store IR_str current position
 
@@ -53,24 +52,21 @@ bool save_master_code;          // IF TRUE, SAVE MASTER CODE TO EEPROM
 unsigned char chg_master_code;  // IF 0x3, NEXT CODE INSERTED INTO IR WILL CHG MASTER_CODE
 
 bool save_to_EEPROM;       // SET IF EEPROM NEEDS UPDATE
-                               
-WIEGAND rfid;              // WIEGAND protocol RFID reader
-IRrecv ir(PIN_IR_RECV);    // IR sensor
 
 void setup() {  
   setupModules(EN_MODULES);      // disable unused modules to reduce power consumption  
   initialize_pins();             // SETUP PINS TO INITIAL VALUES AND SIGNAL DIRECTIONS
   init_variables();              // SETUP INITIAL VALUES TO VARIABLES        
   
-  // DEBUG
   #ifdef DEBUG_MODE
-  Serial.begin(9600);            // INITIALIZE SERIAL PC COMMUNICATION
+  Serial.begin(9600);            // INITIALIZE SERIAL COMMUNICATION  
   #endif
   
   read_EEPROM();                 // READ DATA FROM EEPROM 
-  rfid.begin();                  // INITIALIZE WIEGAND SERIAL-PARALLEL COMMUNICATION
-  ir.enableIRIn();               // START IR RECEIVER      
-  
+  init_oled();                   // initialize oled
+  init_rfid();                   // initialize rfid
+  init_ir();                     // initialize ir
+    
   // DEBUG   
   #ifdef DEBUG_MODE
   Serial.println(F("RFID Door Access Control - READY"));
@@ -85,9 +81,7 @@ void loop() {
   wdt_reset();                   // reset watchdog
   // keep door closed at all times
   digitalWrite(PIN_CONTROL, CONTROL_INIT_STATE); 
-  if (rfid.available()){          // CHECK FOR RFID AVAILABILITY            
-    execute_rfid_fnc(rfid.getCode());  
-  }
+  check_rfid();                  // check for rfid read
   wdt_reset();                   // reset watchdog
   check_elapsed_master_fnc();    // execute timed procedures (master function)
   check_ir();                    // check IR btn pressed
@@ -97,7 +91,7 @@ void loop() {
 
 void init_variables(){
   prev_time = 0;                 // INITIALIZE PREV_TIME    
-  resetIRStr();                  // RESET IR STRING    
+  reset_ir_str();                // RESET IR STRING    
   chg_master_code = 0;           // reset chg master code
   save_master_code = false;      // DO NOT SAVE/CHG MASTER CODE YET
   save_to_EEPROM = false;        // do not update eeprom yet

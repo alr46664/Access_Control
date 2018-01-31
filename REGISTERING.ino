@@ -9,7 +9,7 @@
  */
 
 // Return -1 if card is not found, otherwise return >0
-short find_ID(const RFID_CODE code){
+short find_ID(const RFID_CODE& code){
   for (short i = 0; i < allow_code_len; i++){
     if (code == allow_code[i])
       return i;      
@@ -18,7 +18,7 @@ short find_ID(const RFID_CODE code){
 }
 
 //REGISTER NEW ID IF WE HAVE STORAGE SPACE AVAILABLE
-void register_rfid(const RFID_CODE code){
+void register_rfid(const RFID_CODE& code){
   if (find_ID(code) != -1){ //ID ALREADY REGISTERED  
     #ifdef DEBUG_MODE
     Serial.print(F("Registration Warning - ID Already Registered: "));
@@ -45,7 +45,7 @@ void register_rfid(const RFID_CODE code){
 }
 
 //UNREGISTER ID IF IT'S AN ALLOWED ONE
-void unregister_rfid(const RFID_CODE code){
+void unregister_rfid(const RFID_CODE& code){
   const short ID_POS = find_ID(code);
   if (ID_POS != -1) {           //CHECK IF ID IS AN ALLOWED ID
     allow_code[ID_POS] = allow_code[--allow_code_len]; //UNREGISTER ID    
