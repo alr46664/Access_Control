@@ -1,2 +1,12 @@
-*.fzz
 .directory
+*.zip
+*.pdf
+*.fdb_latexmk
+*.fls
+*.log
+*.aux
+*.gz
+*.toc
+
+.vscode
+build

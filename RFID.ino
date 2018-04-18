@@ -34,73 +34,49 @@
  *    
  */
 
-#include <avr/wdt.h>  // Watchdog Library (needs optiboot bootloader to work well)
-#include <IRremote.h> // IR Library (https://github.com/z3t0/Arduino-IRremote)
-#include <Wiegand.h>  // Wiegand RFID Library (https://github.com/monkeyboard/Wiegand-Protocol-Library-for-Arduino)
-#include "TYPES.h"    // Custom Project Constants and Types
+#include <avr/wdt.h>   // Watchdog Library (needs optiboot bootloader to work well)
+#include <PowerMgr.h>  // PowerManager Library
+#include <Wiegand.h>   // Wiegand RFID Library 
 
-RFID_CODE allow_code[ALLOW_CODE_SIZE]; // ALLOWED NON-MASTER ID'S
-unsigned char allow_code_len;          // # OF IDS ALLOWED (MAX VALUE IS ALLOW_CODE_SIZE)
+// UNCOMMENT FOR DEBUG MODE
+// #define DEBUG_MODE 1
 
-RFID_CODE master_code;                        // MASTER CODE RFID TAG
-MasterFunction num_master_fnc = ACCESS_NULL;  // KEEP TRACK OF MASTER ID FUNCTION  
+#include "State.h"     // System State Tracker
+#include "IR.h"        // IR Controller
 
-unsigned long prev_time;   // PREVIOUS TIME COUNTER
-char IR_str[IR_STR_LEN];   // String to store IR received signals
-unsigned char IR_count;    // counter to store IR_str current position
-
-bool save_master_code;          // IF TRUE, SAVE MASTER CODE TO EEPROM
-unsigned char chg_master_code;  // IF 0x3, NEXT CODE INSERTED INTO IR WILL CHG MASTER_CODE
-
-bool save_to_EEPROM;       // SET IF EEPROM NEEDS UPDATE
-                               
-WIEGAND rfid;              // WIEGAND protocol RFID reader
-IRrecv ir(PIN_IR_RECV);    // IR sensor
+State stateManager;          // stateManager state tracker
+WIEGAND rfid;          // WIEGAND protocol RFID reader
+IR ir(stateManager);         // IR controller
 
 void setup() {  
-  setupModules(EN_MODULES);      // disable unused modules to reduce power consumption  
-  initialize_pins();             // SETUP PINS TO INITIAL VALUES AND SIGNAL DIRECTIONS
-  init_variables();              // SETUP INITIAL VALUES TO VARIABLES        
-  
-  // DEBUG
+  // disable unused modules to reduce power consumption
+  PowerMgr::setupModules((~POWER_EN_ALL) || POWER_EN_TIMER0 || POWER_EN_USART);    
+  // debug mode begin
   #ifdef DEBUG_MODE
-  Serial.begin(9600);            // INITIALIZE SERIAL PC COMMUNICATION
+  Serial.begin(9600);            // INITIALIZE SERIAL PC COMMUNICATION    
   #endif
+  // initialize devices and stateManager variables
+  stateManager.begin();
+  rfid.begin();                  
+  ir.begin();               
   
-  read_EEPROM();                 // READ DATA FROM EEPROM 
-  rfid.begin();                  // INITIALIZE WIEGAND SERIAL-PARALLEL COMMUNICATION
-  ir.enableIRIn();               // START IR RECEIVER      
-  
-  // DEBUG   
-  #ifdef DEBUG_MODE
-  Serial.println(F("RFID Door Access Control - READY"));
-  print_n_acc_codes();           //PRINT # OF IDS REGISTERED  
-  #endif
-    
+  // initialize watchdog timer
+  // wdt_reset();                   // reset watchdog  
   wdt_enable(WDTO_8S);           // watchdog configured to 8s
   wdt_reset();                   // reset watchdog  
 }
 
-void loop() {    
-  wdt_reset();                   // reset watchdog
-  // keep door closed at all times
-  digitalWrite(PIN_CONTROL, CONTROL_INIT_STATE); 
-  if (rfid.available()){          // CHECK FOR RFID AVAILABILITY            
-    execute_rfid_fnc(rfid.getCode());  
+void loop() {      
+  wdt_reset();                   
+  // get any IR signals  
+  RFID_CODE code = ir.getRFIDCode();  
+  wdt_reset();                       
+  // check for rfid availability
+  if (rfid.available()){          
+    code = rfid.getCode();    
   }
-  wdt_reset();                   // reset watchdog
-  check_elapsed_master_fnc();    // execute timed procedures (master function)
-  check_ir();                    // check IR btn pressed
-  wdt_reset();                   // reset watchdog
-  write_EEPROM();                // write EEPROM codes if needed  
+  // run any stateManager code here
+  if (code > 0) {
+    stateManager.execute(code);
+  }
 }
-
-void init_variables(){
-  prev_time = 0;                 // INITIALIZE PREV_TIME    
-  resetIRStr();                  // RESET IR STRING    
-  chg_master_code = 0;           // reset chg master code
-  save_master_code = false;      // DO NOT SAVE/CHG MASTER CODE YET
-  save_to_EEPROM = false;        // do not update eeprom yet
-}
-
-
