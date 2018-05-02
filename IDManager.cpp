@@ -73,7 +73,7 @@ int IDManager::unregisterID(const RFID_CODE& code){
 }
 
 void IDManager::write_EEPROM(){
-    unsaved = 0;
+    unsaved = false;
     // SAVE # OF IDS INTO 1ST BYTE OF EEPROM
     EEPROM.put(0, allow_code_len);                        
     // CHECK ALL IDS FOR THE NEED OF SAVING         
@@ -82,8 +82,7 @@ void IDManager::write_EEPROM(){
         EEPROM.put(1 + i*sizeof(RFID_CODE), allow_code[i]);
     }    
     #ifdef DEBUG_MODE
-    Serial.print(F("RFID TAGS SAVED TO EEPROM "));
-    Serial.println(master_code);
+    Serial.println(F("RFID TAGS SAVED TO EEPROM "));    
     #endif      
 }
 

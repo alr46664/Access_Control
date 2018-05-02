@@ -5,6 +5,8 @@
 #include <EEPROM.h>
 #include <avr/wdt.h>   // Watchdog Library (needs optiboot bootloader to work well)
 
+#include "Project.h"       // global PROJECT defines
+
 // SET DEFAULT MASTER CODE IN CASE EEPROM HAS NEVER BEING USED
 #define DEFAULT_MASTER_CODE  26121L     
 // INITIAL MEM POS TO SAVE MASTER ID TO EEPROM

@@ -17,18 +17,17 @@ void IR::begin(){
 RFID_CODE IR::getRFIDCode(){
     // REMOTE CONTROL BTN IDENTIFICATION
     IR_ID ir_id = this->read();             
-    RFID_CODE code = 0;
+    RFID_CODE code = getRFID_Str(ir_id);   // GET RFID CODE IF AVAILABLE;
+    wdt_reset();                           // reset watchdog      
     // REMOTE CONTROL BTN PRESSED
     if (ir_id != NO_BTN_PRESSED) {          
-      state.blinkLED(2);
+      state.blinkLED(2);      
       // CHECK FOR NEED TO CHANGE MASTER CODE
       if (ir_id == MODE) {                  
         state.setMasterCodeChgMode();
-      } else {
-        code = getRFID_Str(ir_id);   // GET RFID CODE IF AVAILABLE
-      }      
-      wdt_reset();                           // reset watchdog      
-    }  
+        return 0;
+      }       
+    }      
     return code;
 }
 
@@ -67,7 +66,7 @@ RFID_CODE IR::getRFID_Str(IR_ID& ir_id){
             return 0;
         }
         // set IR to correct char representation/position
-        rfidStr[rfidStrLen++] = ir_id + '0'; 
+        rfidStr[rfidStrLen++] = ir_id + '0';         
     } else if (ir_id == OK) { 
         // CONFIRM RFID        
         if (rfidStrLen <= 0) {

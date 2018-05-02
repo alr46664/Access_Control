@@ -3,7 +3,9 @@
 
 #include "Arduino.h" 
 #include <avr/wdt.h>    // Watchdog Library (needs optiboot bootloader to work well)
+
 #include <Scheduler.h>  // Scheduler class
+#include "Project.h"       // global PROJECT defines
 #include "Pin.h"        // Output Digital Pins Class
 #include "IDManager.h"  // RFID Tag Manager - Read EEPROM - Write EEPROM
 

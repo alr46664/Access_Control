@@ -5,9 +5,11 @@
 #include <avr/pgmspace.h>  // SAVE DATA INTO FLASH MEMORY
 #include <avr/wdt.h>       // Watchdog Library (needs optiboot bootloader to work well)
 #include <IRremote.h>      // IR Library (https://github.com/z3t0/Arduino-IRremote)
-#include "State.h"           // Pin object
+
+#include "Project.h"          // global PROJECT defines
+#include "State.h"         // Pin object
 #include "Pin.h"           // Pin object
-#include "IDManager.h"     // IDManaher (RFID_CODE)
+#include "IDManager.h"     // IDManager (RFID_CODE)
 
 // IR OPTIONS
 #define PIN_IR_RECV         9          // Pin connected to IR Receiver

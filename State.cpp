@@ -33,49 +33,51 @@ void State::execute(const RFID_CODE& code){
     // keep door closed at all times
     control.reset();
     wdt_reset();        
-    if (manager.getMasterCode() == code){
-        // change to next state
-        nextState();
-    } else {
-        // perform action
-        switch(state){  
-        case ACCESS:                 
-            if (manager.find(code) != -1){            
-                // allow access
-                control.digitalPulse();
-            } else {
-                #ifdef DEBUG_MODE
-                Serial.print("Unregistered ID - ");        
-                Serial.println(code);   
-                #endif
-                // we have an error
-                result = 1;
-            }
-            break;          
-        case REGISTER:                  // REGISTER FUNCTION (PASS 1-TIME MASTER ID)
-            timer.start();
-            result = manager.registerID(code);
-            break;          
-        case UNREGISTER:                  // UNREGISTER FUNCTION (PASS 2-TIMES MASTER ID)
-            timer.start();
-            result = manager.unregisterID(code);
-            break;  
-        case MASTER_CHG:    
-            // DO NOTHING - wait for master code validation (above)
-            break;
-        case MASTER_CONFIRM: 
-            // we know the master code is validated 
-            manager.setMasterCode(code);
-            nextState();
-            break;
-        default:
-            break;                        
-        } 
-    }   
-    // we had a problem 
-    if (!result){        
-        bzr.digitalPulse();
-    } 
+    if (code > 0){
+      if (manager.getMasterCode() == code){
+          // change to next state
+          nextState();
+      } else {
+          // perform action
+          switch(state){  
+          case ACCESS:                 
+              if (manager.find(code) != -1){            
+                  // allow access
+                  control.digitalPulse();
+              } else {
+                  #ifdef DEBUG_MODE
+                  Serial.print("Unregistered ID - ");        
+                  Serial.println(code);   
+                  #endif
+                  // we have an error
+                  result = 1;
+              }
+              break;          
+          case REGISTER:                  // REGISTER FUNCTION (PASS 1-TIME MASTER ID)
+              timer.start();
+              result = manager.registerID(code);
+              break;          
+          case UNREGISTER:                  // UNREGISTER FUNCTION (PASS 2-TIMES MASTER ID)
+              timer.start();
+              result = manager.unregisterID(code);
+              break;  
+          case MASTER_CHG:    
+              // DO NOTHING - wait for master code validation (above)
+              break;
+          case MASTER_CONFIRM: 
+              // we know the master code is validated 
+              manager.setMasterCode(code);
+              nextState();
+              break;
+          default:
+              break;                        
+          } 
+      }   
+      // we had a problem 
+      if (result != 0){                  
+          bzr.digitalPulse();
+      } 
+    }
     // timeout returns to reset state
     if (timer.hasTimeoutHappened()){                
         resetState();
@@ -136,6 +138,7 @@ void State::changeState(StateSystem st){
         led.reset();        
         // save any pending data to eeprom
         saveDataEEPROM();
+        break;
     case REGISTER:
         wdt_reset();
         timer.start();

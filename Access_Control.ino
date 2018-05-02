@@ -34,13 +34,12 @@
  *    
  */
 
+#include "Arduino.h" 
 #include <avr/wdt.h>   // Watchdog Library (needs optiboot bootloader to work well)
-#include <PowerMgr.h>  // PowerManager Library
 #include <Wiegand.h>   // Wiegand RFID Library 
 
-// UNCOMMENT FOR DEBUG MODE
-// #define DEBUG_MODE 1
-
+#include <PowerMgr.h>  // PowerManager Library
+#include "Project.h"      // project GLOBAL header
 #include "State.h"     // System State Tracker
 #include "IR.h"        // IR Controller
 
@@ -58,8 +57,8 @@ void setup() {
   // initialize devices and stateManager variables
   stateManager.begin();
   rfid.begin();                  
-  ir.begin();               
-  
+  ir.begin();                 
+
   // initialize watchdog timer
   // wdt_reset();                   // reset watchdog  
   wdt_enable(WDTO_8S);           // watchdog configured to 8s
@@ -70,13 +69,11 @@ void loop() {
   wdt_reset();                   
   // get any IR signals  
   RFID_CODE code = ir.getRFIDCode();  
-  wdt_reset();                       
+  wdt_reset();                         
   // check for rfid availability
   if (rfid.available()){          
-    code = rfid.getCode();    
-  }
-  // run any stateManager code here
-  if (code > 0) {
-    stateManager.execute(code);
-  }
+    code = rfid.getCode();
+  }  
+  // run tateManager code here  
+  stateManager.execute(code);  
 }
