@@ -1,0 +1,122 @@
+\documentclass[a4paper, 12pt]{article}
+
+\usepackage[portuges]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+
+\title{Sistema RFID}
+
+%author{Caio Rosa \\ João Antônio do Amarante \\ Rodrigo \\ Thuane}
+
+%\date{\today}
+
+\usepackage{float}
+\usepackage{listings}
+\usepackage{subcaption} 
+
+% space between footnote-footnote
+\setlength{\footnotesep}{0.6cm}
+
+% space between text-footnote
+\setlength{\skip\footins}{1cm}
+
+\begin{document}
+%\maketitle
+
+\begin{titlepage}
+	\begin{center}
+%     \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=7cm]{LOGO}
+%     \end{figure}
+
+% 		\huge{Instituto Federal de Educação, Ciência e Tecnologia de São Paulo}
+
+\vspace{10pt}
+        
+        \vspace{85pt}
+        
+		\textbf{\LARGE{Sistema de Controle de Acesso}}\\
+		\large{Tecnologia RFID 125 kHz com (Des)Cadastramento Seletivo}
+		\vspace{8cm}
+		
+	\end{center}
+	
+	\begin{flushleft}
+		\begin{tabbing}
+			Autores:\qquad\= André Madureira\\
+			\>Luiz Madureira\\
+%             \> Nome do Aluno 3 - 17202122\\
+% 			Professor\> Nome do Professor \\
+% 			Horário\> Qua - 15:00-17:00\\
+		
+	\end{tabbing}		  
+	\end{flushleft}
+	
+	\begin{center}
+		\vspace{\fill}
+		Salvador, 05 de Maio de 2017
+	\end{center}
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\tableofcontents
+\thispagestyle{empty}
+
+\newpage
+\pagenumbering{arabic}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Acesso}
+
+Passe a tag RFID no leitor do portão. Se a tag estiver cadastrada, o acesso será liberado. Caso contrário, um bip continuo será emitido pelo leitor.
+
+\section{(Des)Cadastramento de Tags}
+
+\newcommand{\alertaControleRemoto}{\textbf{\textit{*Caso você tenha digitado o código do cartão errado no Controle Remoto, pressione o botão \texttt{U/SD} \includegraphics[height=8mm]{cancel} para cancelar e digite novamente o código desde o início.}}}
+
+\newcommand{\avisoLuzVermelha}{Quando a luz vermelha for desligada, o sistema irá salvar as alterações e sair do modo de (des)cadastramento.}
+
+\begin{enumerate}
+\item Passe a tag mestre no leitor 1x para cadastrar cartões \textbf{OU} 2x para descadastrar (em ambos os casos a luz vermelha do leitor deverá se acender, sendo que no modo de descadastramento ela irá piscar antes de ficar acesa);
+\item Passe o cartão a ser (des)cadastrado no leitor de cartões OU digite o código do cartão no Controle Remoto;
+\item Caso o controle remoto esteja sendo utilizado, pressione o botão \texttt{Seta Esquerda/Direita} \includegraphics[height=8mm]{ok} para confirmar o procedimento\footnote{\alertaControleRemoto};
+\item Caso deseje (des)cadastrar mais cartões, retorne ao item 2 conforme a quantidade de cartões a serem (des)cadastrados (você tem até 20s para (des)cadastrar quantos cartões desejar);
+\item Aguarde até que a luz vermelha se apague (demora cerca de 20s) \textbf{OU} passe o cartão mestre no leitor até que a luz vermelha se apague\footnote{\avisoLuzVermelha} (no modo de cadastramento basta passar uma vez, no modo de descadastramento será preciso passar 2x o cartão mestre).
+\end{enumerate}
+
+\newpage
+\section{Alteração do Tag Mestre}
+
+Em caso de extravio do tag mestre, será necessário cadastrar outro tag mestre no sistema. Ao fazer isso, o tag mestre anterior é automaticamente descadastrado. Para alterar o tag mestre siga os passos abaixo:
+
+\begin{enumerate}
+\item Pressione o botão \texttt{Mode} do Controle Remoto;
+\item Digite o código do tag mestre atual\footnote{\label{controle_remoto_alerta}\alertaControleRemoto};
+\item Pressione o botão \texttt{Seta Esquerda/Direita} \includegraphics[height=8mm]{ok} para confirmar;
+\item Caso o código esteja errado um bip será emitido pelo leitor. Caso isso ocorra, retorne para o passo 1, do contrário prossiga para o passo abaixo;
+\item Digite o código do novo cartão mestre\textsuperscript{\ref{controle_remoto_alerta}};
+\item Pressione o botão \texttt{Seta Esquerda/Direita} \includegraphics[height=8mm]{ok} para confirmar;
+\end{enumerate}
+
+\textbf{Código do Tag Mestre Padrão:} 24121\\\par
+
+\section{Controle Remoto}
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=7cm]{ir}
+    \end{figure}
+
+% \newpage
+% \section{Referências}
+
+% [1] Chapman, S.J. -- Electric Machinery Fundamentals, 4th Edition;
+
+% [2] Fitzgerald, A. E. -- Máquinas Elétricas, 2da Edição;
+
+\end{document}

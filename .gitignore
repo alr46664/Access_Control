@@ -1,7 +1,8 @@
-*.fzz
-
 .directory
+.vscode
 build
+
+*.pdf
 
 *.aux
 *.fls
