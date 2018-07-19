@@ -26,4 +26,4 @@ Build an RFID control system that can register and unregister cards individually
  4. If operation succeeded, LED will flash.
 
 # More Details
-See the [manual/main.pdf](blob/master/manual/main.pdf) for more details about the operation of the system.
+See the [manual/main.pdf](manual/main.pdf) for more details about the operation of the system.
