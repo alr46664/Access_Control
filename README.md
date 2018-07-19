@@ -1,4 +1,14 @@
- 
+# Table of Contents
+
+- [Table of Contents](#table-of-contents)
+- [Project](#project)
+- [Pin Details and Project Requirements](#pin-details-and-project-requirements)
+- [Pin Connection and Prototype Schematic](#pin-connection-and-prototype-schematic)
+- [RFID Reader Operation](#rfid-reader-operation)
+- [IR Reader Operation](#ir-reader-operation)
+- [Change RFID Master Code](#change-rfid-master-code)
+- [More Details](#more-details)
+
 # Project
 
 Build an RFID control system that can register and unregister cards individually using either the RFID reader, or the IR receiver.
@@ -8,6 +18,9 @@ Build an RFID control system that can register and unregister cards individually
 - Pin 2 (int0) => DATA0 of RFID Reader (Wiegand 34 bits protocol)
 - Pin 3 (int1) => DATA1 of RFID Reader (Wiegand 34 bits protocol)
 - Requires ATMEGA328 or ATMEGA328p Arduino to work
+
+# Pin Connection and Prototype Schematic
+See the [Fritizing Schematic](Fritzing/RFID.fzz) for the Arduino pin connection layout.
 
 # RFID Reader Operation
 - Pass Master Tag 1 time and wait to access door
