@@ -33,7 +33,7 @@ enum StateSystem {ACCESS = 0, REGISTER, UNREGISTER, MASTER_CHG, MASTER_CONFIRM};
 
 class State {
 public:    
-    State();
+    State(IDManager* manager);
     
     void begin();    
     void setMasterCodeChgMode();
@@ -43,7 +43,7 @@ public:
     void bzrBeep(unsigned char div = 1);
 private:
     Pin control, led, bzr; // out pins
-    IDManager manager;     // RFID EEPROM manager    
+    IDManager* manager;     // RFID EEPROM manager        
     Scheduler timer;       // timer to perform async actions
     unsigned char state;   // store system state
 

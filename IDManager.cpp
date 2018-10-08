@@ -8,9 +8,20 @@
 IDManager::IDManager(): unsaved(false), master_code(0), allow_code_len(0) { }
 
 void IDManager::begin(){
+    unsaved = false;
+    master_code = 0;
+    allow_code_len = 0;
     // read eeprom data
     read_EEPROM();
 }  
+
+unsigned int IDManager::getTotalCards(){
+    return allow_code_len;
+}
+
+RFID_CODE IDManager::getCard(unsigned int pos){
+    return allow_code[pos];
+}
 
 int IDManager::find(const RFID_CODE& code){
     for (short i = 0; i < allow_code_len; i++){
@@ -81,6 +92,7 @@ void IDManager::write_EEPROM(){
         wdt_reset();
         EEPROM.put(1 + i*sizeof(RFID_CODE), allow_code[i]);
     }    
+    write_EEPROM_master();
     #ifdef DEBUG_MODE
     Serial.println(F("RFID TAGS SAVED TO EEPROM "));    
     #endif      
@@ -91,12 +103,12 @@ RFID_CODE IDManager::getMasterCode(){
 }
 
 void IDManager::setMasterCode(const RFID_CODE& master_code){
+    unsaved = true;
     this->master_code = master_code;    
     #ifdef DEBUG_MODE
     Serial.print(F("NEW MASTER = "));
     Serial.println(master_code);
-    #endif   
-    write_EEPROM_master();    
+    #endif    
 }
 
 bool IDManager::hasUnsavedData(){
@@ -114,14 +126,7 @@ void IDManager::read_EEPROM(){
     if (master_code == 0xFFFFFFFF || master_code == 0x0){ 
         // set master code to its default value      
         setMasterCode(DEFAULT_MASTER_CODE);              
-    }   
-
-    #ifdef DEBUG_MODE
-    Serial.println(F("RFID Door Access Control - READY"));
-    printNumberCodes();           
-    Serial.print(F("MASTER CODE = "));
-    Serial.println(master_code);    
-    #endif
+    }       
 
     // START READING ALLOW_CODE ARRAY
     EEPROM.get(0, allow_code_len);
@@ -134,6 +139,13 @@ void IDManager::read_EEPROM(){
     for (short i = 0; i < allow_code_len; i++){         
         EEPROM.get(1 + i*sizeof(RFID_CODE), allow_code[i]);  
     }
+
+    #ifdef DEBUG_MODE
+    Serial.println(F("RFID Door Access Control - READY"));
+    printNumberCodes();           
+    Serial.print(F("MASTER CODE = "));
+    Serial.println(master_code);    
+    #endif
 }
 
 void IDManager::write_EEPROM_master(){

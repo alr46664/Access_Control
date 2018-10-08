@@ -28,7 +28,10 @@ public:
     int unregisterID(const RFID_CODE& code);
 
     RFID_CODE getMasterCode();
-    void setMasterCode(const RFID_CODE& master_code);    
+    void setMasterCode(const RFID_CODE& master_code);  
+
+    unsigned int getTotalCards();
+    RFID_CODE getCard(unsigned int pos);
 
     bool hasUnsavedData();
     void write_EEPROM();

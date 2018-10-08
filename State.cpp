@@ -4,9 +4,10 @@
 //   PUBLIC
 // ------------
 
-State::State(): 
+State::State(IDManager* manager): 
     state(ACCESS),    
     timer(ITV_EEPROM),
+    manager(manager),
     led(PIN_LED, PIN_LED_INIT, PIN_LED_DELAY), 
     control(PIN_CONTROL, PIN_CONTROL_INIT, PIN_CONTROL_DELAY),
     bzr(PIN_BZR, PIN_BZR_INIT, PIN_BZR_DELAY) 
@@ -16,9 +17,7 @@ void State::begin(){
     // initialize pins IN-OUT
     control.begin();
     led.begin();
-    bzr.begin();
-    // read eeprom and initialize data registers
-    manager.begin();
+    bzr.begin();    
     // reset system state
     resetState();
 }
@@ -34,14 +33,14 @@ void State::execute(const RFID_CODE& code){
     control.reset();
     wdt_reset();        
     if (code > 0){
-      if (manager.getMasterCode() == code){
+      if (manager->getMasterCode() == code){
           // change to next state
           nextState();
       } else {
           // perform action
           switch(state){  
           case ACCESS:                 
-              if (manager.find(code) != -1){            
+              if (manager->find(code) != -1){            
                   // allow access
                   control.digitalPulse();
               } else {
@@ -55,18 +54,18 @@ void State::execute(const RFID_CODE& code){
               break;          
           case REGISTER:                  // REGISTER FUNCTION (PASS 1-TIME MASTER ID)
               timer.start();
-              result = manager.registerID(code);
+              result = manager->registerID(code);
               break;          
           case UNREGISTER:                  // UNREGISTER FUNCTION (PASS 2-TIMES MASTER ID)
               timer.start();
-              result = manager.unregisterID(code);
+              result = manager->unregisterID(code);
               break;  
           case MASTER_CHG:    
               // DO NOTHING - wait for master code validation (above)
               break;
           case MASTER_CONFIRM: 
               // we know the master code is validated 
-              manager.setMasterCode(code);
+              manager->setMasterCode(code);
               nextState();
               break;
           default:
@@ -184,8 +183,8 @@ void State::changeState(StateSystem st){
 
 // save data to eeprom if needed
 void State::saveDataEEPROM(){
-    if (manager.hasUnsavedData()){
-        manager.write_EEPROM();
+    if (manager->hasUnsavedData()){
+        manager->write_EEPROM();
     }
 }
 
