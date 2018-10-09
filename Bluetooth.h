@@ -17,7 +17,7 @@
 #define  BLE_CONN  10
 
 // door bluetooth name (maximum 9 chars)
-#define BLE_NAME    "hart2"
+#define BLE_NAME    "hart3"
 // bluetooth password (needs to be 6 numbers)
 #define BLE_PASSWD  "001921"
 

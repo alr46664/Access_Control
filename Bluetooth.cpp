@@ -22,35 +22,45 @@ void Bluetooth::begin(int baudrate){
     bt.begin(baudrate);
     // configure bluetooth    
     wdt_reset();   
-    delay(500);
+    delay(600);
     wdt_reset();   
-    send(F("AT+ROLE0"), false);  // set bluetooth as slave      
+    send(F("AT+ROLE0"), false);  // set bluetooth as slave          
     wdt_reset();
-    send(F("AT+UUIDFFE0"), false); // define custom service uuid
+    send(F("AT+UUIDFFE0"), false); // define custom service uuid    
+    clearSerialBuffer();
     wdt_reset();
-    send(F("AT+CHARFFE1"), false); // define custom text characteristic uuid
+    send(F("AT+CHARFFE1"), false); // define custom text characteristic uuid    
     wdt_reset();
     clearSerialBuffer();
     
     // set dev name
     strcpy_P(command, PSTR("AT+NAME")); 
     strcat_P(command, PSTR(BLE_NAME));    
+    wdt_reset();    
+    send(command, false);     
     wdt_reset();
-    send(command, false); 
+    send(F("AT+TYPE2"), false); // activate pin auth         
     wdt_reset();
-    send(F("AT+TYPE0"), false); // activate pin auth 
-    wdt_reset();
+    clearSerialBuffer();
 
     // set 6-number pin password    
     strcpy_P(command, PSTR("AT+PIN")); 
     strcat_P(command, PSTR(BLE_PASSWD));    
     wdt_reset();
-    send(command, false); 
+    send(command, false);         
     wdt_reset();
     clearSerialBuffer();
 }  
 
-void Bluetooth::execute(){      
+void Bluetooth::execute(){                
+    while (bt.available()){
+      Serial.write(bt.read());
+    }
+    while (Serial.available()){      
+      bt.write(Serial.read());
+    }
+    return;
+
     // read bluetooth data
     if (!bt.available()){
       return;
@@ -310,9 +320,11 @@ void Bluetooth::send(const char* str, bool useTerminator){
     wdt_reset();
     int len = strlen(str);
     for (int i = 0; i < len; i++){
-      bt.write(str[i]);
+      bt.write(str[i]);      
       wdt_reset();      
     }
+    bt.write('\r');    
+    bt.write('\n');    
     wdt_reset();     
     bt.flush();    
     wdt_reset(); 
