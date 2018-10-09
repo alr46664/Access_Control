@@ -69,32 +69,31 @@ void setup() {
 
 void loop() {      
   wdt_reset();    
-//  if (bluetooth.isConnected()){
-//    bluetooth.execute();
-//    wdt_reset();          
-//  } else if (rfid.available()){
-//    // state manager logic here 
-//    // (register, unregister or access)
-//    RFID_CODE code = rfid.getCode();    
-//    stateManager.execute(code);  
-//    #ifdef DEBUG_MODE
-//    Serial.println("RECV RFID");
-//    #endif
-//  }  
-  bluetooth.execute();
+  if (bluetooth.isConnected()){
+    bluetooth.execute();
+    wdt_reset();          
+  } else if (rfid.available()){
+    // state manager logic here 
+    // (register, unregister or access)
+    RFID_CODE code = rfid.getCode();    
+    stateManager.execute(code);  
+    #ifdef DEBUG_MODE
+    Serial.println("RECV RFID");
+    #endif
+  }    
   #ifdef DEBUG_MODE    
-//  if (Serial.available()){
-//    delay(150);
-//    while(Serial.available()){
-//      Serial.read();
-//    }
-//    Serial.print(F("MASTER CARD - "));
-//    Serial.println(manager.getMasterCode());
-//    Serial.println();
-//    Serial.println(F("CARD LIST"));
-//    for (int i = 0; i < manager.getTotalCards(); i++) {
-//      Serial.println(manager.getCard(i));
-//    }    
-//  }
+  if (Serial.available()){
+    delay(150);
+    while(Serial.available()){
+      Serial.read();
+    }
+    Serial.print(F("MASTER CARD - "));
+    Serial.println(manager.getMasterCode());
+    Serial.println();
+    Serial.println(F("CARD LIST"));
+    for (int i = 0; i < manager.getTotalCards(); i++) {
+      Serial.println(manager.getCard(i));
+    }    
+  }
   #endif
 }

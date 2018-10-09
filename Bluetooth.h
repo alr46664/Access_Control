@@ -25,7 +25,7 @@
 #define  BLE_MAX_BYTE   20
 
 // bluetooth delay required to receive/send data 
-#define  BLE_TRANSMISSION_DELAY  200
+#define  BLE_TRANSMISSION_DELAY  150
 
 // bluetooth timeout for data receival (in ms)
 #define  BLE_RECV_TIMEOUT  5000
@@ -86,9 +86,9 @@ private:
     void sendReceiveACK();
     
     // send data and flush it
-    void send(const __FlashStringHelper * str, bool useTerminator);    
-    void send(RFID_CODE code, bool useTerminator);
-    void send(const char* str, bool useTerminator);      
+    void send(const __FlashStringHelper * str, bool useDelay);    
+    void send(RFID_CODE code, bool useDelay);
+    void send(const char* str, bool useDelay);      
     
     // clear serial buffer
     void clearSerialBuffer();

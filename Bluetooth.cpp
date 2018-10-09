@@ -24,12 +24,12 @@ void Bluetooth::begin(int baudrate){
     wdt_reset();   
     delay(600);
     wdt_reset();   
-    send(F("AT+ROLE0"), false);  // set bluetooth as slave          
+    send(F("AT+ROLE0"), true);  // set bluetooth as slave          
     wdt_reset();
-    send(F("AT+UUIDFFE0"), false); // define custom service uuid    
+    send(F("AT+UUIDFFE0"), true); // define custom service uuid    
     clearSerialBuffer();
     wdt_reset();
-    send(F("AT+CHARFFE1"), false); // define custom text characteristic uuid    
+    send(F("AT+CHARFFE1"), true); // define custom text characteristic uuid    
     wdt_reset();
     clearSerialBuffer();
     
@@ -37,9 +37,9 @@ void Bluetooth::begin(int baudrate){
     strcpy_P(command, PSTR("AT+NAME")); 
     strcat_P(command, PSTR(BLE_NAME));    
     wdt_reset();    
-    send(command, false);     
+    send(command, true);     
     wdt_reset();
-    send(F("AT+TYPE2"), false); // activate pin auth         
+    send(F("AT+TYPE2"), true); // activate pin auth         
     wdt_reset();
     clearSerialBuffer();
 
@@ -47,19 +47,19 @@ void Bluetooth::begin(int baudrate){
     strcpy_P(command, PSTR("AT+PIN")); 
     strcat_P(command, PSTR(BLE_PASSWD));    
     wdt_reset();
-    send(command, false);         
+    send(command, true);         
     wdt_reset();
     clearSerialBuffer();
 }  
 
 void Bluetooth::execute(){                
-    while (bt.available()){
-      Serial.write(bt.read());
-    }
-    while (Serial.available()){      
-      bt.write(Serial.read());
-    }
-    return;
+//    while (bt.available()){
+//      Serial.write(bt.read());
+//    }
+//    while (Serial.available()){      
+//      bt.write(Serial.read());
+//    }
+//    return;
 
     // read bluetooth data
     if (!bt.available()){
@@ -304,19 +304,19 @@ void Bluetooth::sendReceiveACK(){
     send((const __FlashStringHelper *) &BLE_RECV_CONFIRM[0], false);    
 }
 
-void Bluetooth::send(const __FlashStringHelper * str, bool useTerminator){
+void Bluetooth::send(const __FlashStringHelper * str, bool useDelay){
     char command[BLE_MAX_BYTE];
     strcpy_P(command, (PGM_P) str);
-    send(command, useTerminator);
+    send(command, useDelay);
 }
 
-void Bluetooth::send(RFID_CODE code, bool useTerminator){
+void Bluetooth::send(RFID_CODE code, bool useDelay){
     char code_str[BLE_MAX_BYTE];
     snprintf(code_str, BLE_MAX_BYTE, "%lu", code);
-    send(code_str, useTerminator);
+    send(code_str, useDelay);
 }
 
-void Bluetooth::send(const char* str, bool useTerminator){    
+void Bluetooth::send(const char* str, bool useDelay){    
     wdt_reset();
     int len = strlen(str);
     for (int i = 0; i < len; i++){
@@ -328,7 +328,9 @@ void Bluetooth::send(const char* str, bool useTerminator){
     wdt_reset();     
     bt.flush();    
     wdt_reset(); 
-    delay(BLE_TRANSMISSION_DELAY);
+    if (useDelay){
+      delay(BLE_TRANSMISSION_DELAY);
+    }
 }
 
 bool Bluetooth::hasReceivedConfirmation(){
